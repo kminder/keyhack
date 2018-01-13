@@ -46,8 +46,10 @@ public class KeyHack {
         extractKey();
       } else if( args.isExtractAllKeys() ) {
         extractAllKeys();
+      } else if( args.getAliasName() != null ){
+        extractKey();
       } else {
-        Args.showHelpAndExit();;
+        extractAllKeys();
       }
     } catch ( Exception e ) {
       e.printStackTrace();

@@ -18,6 +18,8 @@ under the License.
 */
 package net.minder.keyhack;
 
+import java.io.File;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -32,21 +34,21 @@ public class Args {
 
   private static CommandLine args;
 
-  private static String CMD_HELP = "help";
-  private static String CMD_LIST = "list";
-  private static String CMD_EXTRACT = "extract";
-  private static String CMD_EXTRACTALL = "extractall";
-  private static String OPT_KEYSTORE = "keystore";
-  private static String OPT_KEYSTOREPASS = "keystorepass";
-  private static String OPT_KEYSTORETYPE = "keystoretype";
-  private static String OPT_ALIAS = "alias";
-  private static String OPT_KEYPASS = "keypass";
-  private static String OPT_KEYFORMAT = "keyformat";
+  private static final String CMD_HELP = "help";
+  private static final String CMD_LIST = "list";
+  private static final String CMD_EXTRACT = "extract";
+  private static final String CMD_EXTRACTALL = "extractall";
+  private static final String OPT_KEYSTORE = "keystore";
+  private static final String OPT_KEYSTOREPASS = "keystorepass";
+  private static final String OPT_KEYSTORETYPE = "keystoretype";
+  private static final String OPT_ALIAS = "alias";
+  private static final String OPT_KEYPASS = "keypass";
+  private static final String OPT_KEYFORMAT = "keyformat";
 
 
   private static Options options() {
     Options options = new Options();
-    options.addRequiredOption( "f", OPT_KEYSTORE, true, "Keystore file. Required." );
+    options.addRequiredOption("f", OPT_KEYSTORE, true, "Keystore file. Required." );
     options.addOption( "h", CMD_HELP, false, "Show this help." );
     options.addOption( "l", CMD_LIST, false, "List all keystore key aliases." );
     options.addOption( "e", CMD_EXTRACT, false, "Extract keystore key." );
@@ -61,8 +63,29 @@ public class Args {
 
   static void showHelpAndExit() {
     HelpFormatter formater = new HelpFormatter();
-    formater.printHelp( "java -jar keyhack.jar", OPTIONS );
+    formater.printHelp( "java -jar keyhack.jar", OPTIONS, true );
     System.exit(1);
+  }
+
+  private static boolean validate( CommandLine args ) {
+    boolean valid = true;
+    String keystore = args.getOptionValue( OPT_KEYSTORE );
+    File keystoreFile = new File( keystore );
+    if ( !keystoreFile.exists() ) {
+      System.out.println( "ERROR: Keystore file does not exist: " + keystore );
+      valid = false;
+    } else {
+      if( !keystoreFile.canRead() ) {
+        System.out.println( "ERROR: Keystore file unreadable: " + keystore );
+        valid = false;
+      } else {
+        if( !keystoreFile.isFile() ) {
+          System.out.println( "ERROR: Keystore file invalid: " + keystore );
+          valid = false;
+        }
+      }
+    }
+    return valid;
   }
 
   private static CommandLine parse( String[] args ) {
@@ -70,6 +93,9 @@ public class Args {
     CommandLine cmd = null;
     try {
       cmd = parser.parse( OPTIONS, args);
+      if ( !validate( cmd ) ) {
+        showHelpAndExit();
+      }
     } catch ( ParseException e ) {
       showHelpAndExit();
     }
@@ -96,6 +122,10 @@ public class Args {
     return args.hasOption( CMD_EXTRACTALL );
   }
 
+  String getKeystoreFile() {
+    return args.getOptionValue( OPT_KEYSTORE );
+  }
+
   char[] getKeystorePassword() {
     return args.getOptionValue( OPT_KEYSTOREPASS, "" ).toCharArray();
   }
@@ -106,10 +136,6 @@ public class Args {
     } else {
       return FilenameUtils.getExtension( getKeystoreFile() );
     }
-  }
-
-  String getKeystoreFile() {
-    return args.getOptionValue( OPT_KEYSTORE );
   }
 
   String getAliasName() {
