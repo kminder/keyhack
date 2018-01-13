@@ -30,20 +30,32 @@ public class Args {
 
   private static Options OPTIONS = options();
 
-  static CommandLine args;
+  private static CommandLine args;
+
+  private static String CMD_HELP = "help";
+  private static String CMD_LIST = "list";
+  private static String CMD_EXTRACT = "extract";
+  private static String CMD_EXTRACTALL = "extractall";
+  private static String OPT_KEYSTORE = "keystore";
+  private static String OPT_KEYSTOREPASS = "keystorepass";
+  private static String OPT_KEYSTORETYPE = "keystoretype";
+  private static String OPT_ALIAS = "alias";
+  private static String OPT_KEYPASS = "keypass";
+  private static String OPT_KEYFORMAT = "keyformat";
+
 
   private static Options options() {
     Options options = new Options();
-    options.addOption( "h", "showHelp", false, "Show this showHelp." );
-    options.addOption( "l", "list", false, "List keystore aliases." );
-    options.addOption( "sf", "keystore", true, "Keystore file" );
-    options.addOption( "sp", "storepass", true, "Keystore password." );
-    options.addOption( "st", "storetype", true, "Keystore type." );
-    options.addOption( "e", "extract", false, "Extract key." );
-    options.addOption( "ea", "extractall", false, "Extract all keys." );
-    options.addOption( "an", "aliasname", true, "Key alias." );
-    options.addOption( "ap", "aliaspass", true, "Key password." );
-    options.addOption( "ee", "extractencoding", true, "raw|b64" );
+    options.addRequiredOption( "f", OPT_KEYSTORE, true, "Keystore file. Required." );
+    options.addOption( "h", CMD_HELP, false, "Show this help." );
+    options.addOption( "l", CMD_LIST, false, "List all keystore key aliases." );
+    options.addOption( "e", CMD_EXTRACT, false, "Extract keystore key." );
+    options.addOption( "ea", CMD_EXTRACTALL, false, "Extract all keys." );
+    options.addOption( "p", OPT_KEYSTOREPASS, true, "Keystore password. Defaults to empty string." );
+    options.addOption( "t", OPT_KEYSTORETYPE, true, "Keystore type. Defaults to extension of keystore file." );
+    options.addOption( "a", OPT_ALIAS, true, "Key alias." );
+    options.addOption( "kp", OPT_KEYPASS, true, "Key password. Defaults to store password." );
+    options.addOption( "kf", OPT_KEYFORMAT, true, "Extracted key display format. Supports raw or b64. Defaults to raw." );
     return options;
   }
 
@@ -69,47 +81,47 @@ public class Args {
   }
 
   boolean isShowHelp() {
-    return args.hasOption( "showHelp" );
+    return args.hasOption( CMD_HELP );
   }
 
   boolean isListAliases() {
-    return args.hasOption( "list" );
+    return args.hasOption( CMD_LIST );
   }
 
   boolean isExtractKey() {
-    return args.hasOption( "extract" );
+    return args.hasOption( CMD_EXTRACT );
   }
 
   boolean isExtractAllKeys() {
-    return args.hasOption( "extractall" );
+    return args.hasOption( CMD_EXTRACTALL );
   }
 
   char[] getKeystorePassword() {
-    return args.getOptionValue( "storepass", "" ).toCharArray();
+    return args.getOptionValue( OPT_KEYSTOREPASS, "" ).toCharArray();
   }
 
   String getKeystoreType() {
-    if ( args.hasOption( "storetype" ) ) {
-      return args.getOptionValue( "storetype" );
+    if ( args.hasOption( OPT_KEYSTORETYPE ) ) {
+      return args.getOptionValue( OPT_KEYSTORETYPE );
     } else {
       return FilenameUtils.getExtension( getKeystoreFile() );
     }
   }
 
   String getKeystoreFile() {
-    return args.getOptionValue( "keystore" );
+    return args.getOptionValue( OPT_KEYSTORE );
   }
 
   String getAliasName() {
-    return args.getOptionValue( "aliasname" );
+    return args.getOptionValue( OPT_ALIAS );
   }
 
   char[] getAliasPassword() {
-    return args.getOptionValue( "aliaspass", args.getOptionValue( "storepass", "" ) ).toCharArray();
+    return args.getOptionValue( OPT_KEYPASS, args.getOptionValue( OPT_KEYSTOREPASS, "" ) ).toCharArray();
   }
 
   String getKeyEncoding() {
-    return args.getOptionValue( "encodekey", "raw" );
+    return args.getOptionValue( OPT_KEYFORMAT, "raw" );
   }
 
 }
