@@ -43,7 +43,7 @@ public class Args {
     options.addOption( "ea", "extractall", false, "Extract all keys." );
     options.addOption( "an", "aliasname", true, "Key alias." );
     options.addOption( "ap", "aliaspass", true, "Key password." );
-    options.addOption( "ek", "extractencoding", true, "raw|b64" );
+    options.addOption( "ee", "extractencoding", true, "raw|b64" );
     return options;
   }
 
