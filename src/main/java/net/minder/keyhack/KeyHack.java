@@ -43,7 +43,11 @@ public class KeyHack {
       } else if( args.isListAliases() ) {
         listAliases();
       } else if( args.isExtractKey() ) {
-        extractKey();
+        if ( null == args.getAliasName() ) {
+          extractAllKeys();
+        } else {
+          extractKey();
+        }
       } else if( args.isExtractAllKeys() ) {
         extractAllKeys();
       } else if( args.getAliasName() != null ){
