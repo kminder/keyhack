@@ -23,11 +23,11 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.minder</groupId>
-    <artifactId>keyhack</artifactId>
-    <version>1.0</version>
+    <artifactId>keypeek</artifactId>
+    <version>1.0.1</version>
 
     <properties>
-        <main-class>net.minder.keyhack.KeyHack</main-class>
+        <main-class>net.minder.keypeek.KeyPeek</main-class>
     </properties>
 
     <build>

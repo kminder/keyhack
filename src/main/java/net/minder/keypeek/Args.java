@@ -16,7 +16,7 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 */
-package net.minder.keyhack;
+package net.minder.keypeek;
 
 import java.io.File;
 
@@ -63,7 +63,7 @@ public class Args {
 
   static void showHelpAndExit() {
     HelpFormatter formater = new HelpFormatter();
-    formater.printHelp( "java -jar keyhack.jar", OPTIONS, true );
+    formater.printHelp( "java -jar keypeek.jar", OPTIONS, true );
     System.exit(1);
   }
 
@@ -131,11 +131,16 @@ public class Args {
   }
 
   String getKeystoreType() {
+    String type = "jceks";
     if ( args.hasOption( OPT_KEYSTORETYPE ) ) {
-      return args.getOptionValue( OPT_KEYSTORETYPE );
+      type = args.getOptionValue( OPT_KEYSTORETYPE );
     } else {
-      return FilenameUtils.getExtension( getKeystoreFile() );
+      String ext = FilenameUtils.getExtension( getKeystoreFile() );
+      if ( ext != null && !ext.trim().isEmpty() ) {
+        type = ext;
+      }
     }
+    return type;
   }
 
   String getAliasName() {
